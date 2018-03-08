@@ -16,8 +16,9 @@ langTab = ['fr_FR', 'de_DE', 'en', 'fr_BE', 'nl_BE', 'nl_NL', 'it_IT', 'en', 'en
 lang1 = langTab[0] # on veut ça
 lang2 = langTab[7] # par rapport à ça ?
 
-ressourceFolder = '/home/lyd/babyliss/conair-uk/cartridges/app_babyliss_fr/cartridge/templates/resources'
-csvFolder = '/home/lyd/Bureau'
+user = os.environ['USERPROFILE']
+ressourceFolder = os.path.join(user, 'workspace\\ba-sh-salesforce-site-ecomm\\cartridges\\app_bash\\cartridge\\templates\\resources')
+csvFolder = os.path.join(user,'Desktop')
 csvName = lang1 + '_' + lang2 + '_properties'
 theDelimiter = 'œ'
 ####
