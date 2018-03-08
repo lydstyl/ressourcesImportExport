@@ -16,6 +16,7 @@ langTab = ['fr_FR', 'de_DE', 'en', 'fr_BE', 'nl_BE', 'nl_NL', 'it_IT', 'en', 'en
 lang1 = langTab[0] # on veut ça
 lang2 = langTab[7] # par rapport à ça ?
 
+###
 user = os.environ['USERPROFILE']
 ressourceFolder = os.path.join(user, 'workspace\\ba-sh-salesforce-site-ecomm\\cartridges\\app_bash\\cartridge\\templates\\resources')
 csvFolder = os.path.join(user,'Desktop')
