@@ -12,15 +12,14 @@ todo : refaire ce script en NodeJS voir https://www.npmjs.com/package/properties
 """
 import csv, os
 #### VARIABLES A RENSEIGNER AVANT DE LANCER LE SCRIPT
-langTab = ['fr_FR', 'de_DE', 'en', 'fr_BE', 'nl_BE', 'nl_NL', 'it_IT', 'en', 'en_AE']
-lang1 = langTab[0] # on veut ça
-lang2 = langTab[7] # par rapport à ça ?
+langTab = ['fr_FR', 'de_DE', 'en_GB', 'fr_BE', 'nl_BE', 'nl_NL', 'it_IT', 'en', 'en_US']
+langCheck = ['fr_FR', 'nl_NL','de_DE', 'en_HK', 'en_US', 'es_ES', 'en_GB'] # on veut ces langues
 
-###
+
 user = os.environ['USERPROFILE']
 ressourceFolder = os.path.join(user, 'workspace\\ba-sh-salesforce-site-ecomm\\cartridges\\app_bash\\cartridge\\templates\\resources')
 csvFolder = os.path.join(user,'Desktop')
-csvName = lang1 + '_' + lang2 + '_properties'
+csvName = 'properties'
 theDelimiter = 'œ'
 ####
 keyValTab = []
@@ -43,28 +42,54 @@ def loadProperties(filePath):
     except Exception:
         pass
     return props
-print(lang1 + '-->' + lang2)
-with open(csvFolder + '/' + csvName + '.csv', 'w', newline='') as csvfile:
-    spamwriter = csv.writer(csvfile, delimiter=theDelimiter,
-                                    quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    spamwriter.writerow(['FILE'] + ['KEY'] + ['VAL ' + lang1] + ['VAL2 ici ' + lang2]) #on ajoute lang ici fr_FR be_FR be_NL nl_NL it_IT en_AE
-    for element in os.listdir(ressourceFolder):
-        if lang1 not in element: # exemple if 'nl_NL' not in file name we pass
-            continue
-        properties = loadProperties(ressourceFolder + '/' + element)
 
-        fileNameOtherLang = element.replace(lang1, lang2)
-        properties2 = loadProperties(ressourceFolder + '/' + fileNameOtherLang)
-        for key in properties:
-            keyVal = key + properties[key]
-            doublon = 'False'
-            if keyVal in keyValTab: # double found
-                doublon = 'True'
-            keyValTab.append(keyVal)
-            
-            val2 = ''
-            for key2 in properties2:
-                if key2 == key:
-                    val2 = properties2[key2]
 
-            spamwriter.writerow([element] + [key] + [properties[key]] + [val2])
+def getAllProperties():
+    """
+    Gets properties objects for all languages
+    """
+    allProperties = {}
+    for lang in langCheck:
+        allProperties[lang] = {}
+        for element in os.listdir(ressourceFolder):
+            if lang not in element: # exemple if 'nl_NL' not in file name we pass
+                continue
+            properties = loadProperties(os.path.join(ressourceFolder, element))
+            allProperties[lang].update(properties)
+    return allProperties
+
+
+def getAllKeys(allProperties):
+    """
+    returns properties list from the properties object passed as parameter
+    """
+    assert type(allProperties) == dict
+    allKeys = []
+    for key in allProperties:
+        allKeys.extend(list(allProperties[key].keys()))
+    return sorted(list(set(allKeys)))
+
+
+if __name__ == '__main__':
+    allProperties = getAllProperties()
+    keys = getAllKeys(allProperties)
+    with open(csvFolder + '/' + csvName + '.csv', 'w', newline='') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=theDelimiter, quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(['PROPERTIES'] + langCheck)
+        for key in keys:
+            row = []
+            row.append(key)
+            for lang in langCheck:
+                if (key in allProperties[lang]):
+                    row.append(allProperties[lang][key])
+                else:
+                    row.append(" ")
+            spamwriter.writerow(row)
+
+
+ 
+
+
+
+
+    
